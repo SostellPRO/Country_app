@@ -2,11 +2,15 @@
 
 // récupérer les données
 
-const data = fetch("https://restcountries.com/v3.1/all")
-  .then((res) => res.json())
-  .then((res) => console.log(res));
+const countries = [];
 
-function displayCountries() {}
+async function getCountries() {
+  const data = await fetch("https://restcountries.com/v3.1/all")
+    .then((res) => res.json())
+    .then(countries.push(...res));
+  console.log(countries);
+}
+
 // 2 - Créer une fonction pour "fetcher" les données, afficher les données dans la console.
 
 // 3 - Passer les données à une variable
