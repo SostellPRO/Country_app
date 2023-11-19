@@ -1,15 +1,34 @@
 // 1 - Tester le lien de l'API dans le navigateur (https://restcountries.com/v3.1/all)
 
 // récupérer les données
+const countriesContainer = document.querySelector(".countries-container");
+let countriesData = [];
 
-const countries = [];
-
-async function getCountries() {
-  const data = await fetch("https://restcountries.com/v3.1/all")
+async function fetchCountries() {
+  await fetch("https://restcountries.com/v3.1/all")
     .then((res) => res.json())
-    .then(countries.push(...res));
-  console.log(countries);
+    .then((data) => (countriesData = data));
+  console.log(countriesData);
+  countriesDisplay();
 }
+
+function countriesDisplay() {
+  countriesContainer.innerHTML = countriesData.map(
+    (country) =>
+      `
+<dib class="card">
+<img src=${country.flag.png}>
+<h2>${country.translations.fra.common}</h2>
+<h3>${country.capital}</h3>
+<p> Population : ${country.population}</p>
+
+</div>
+
+`
+  );
+}
+
+window.addEventListener("load", fetchCountries);
 
 // 2 - Créer une fonction pour "fetcher" les données, afficher les données dans la console.
 
