@@ -2,7 +2,10 @@
 
 // récupérer les données
 const countriesContainer = document.querySelector(".countries-container");
+const btnSort = document.querySelectorAll(".btnSort");
+const inputSearch = document.getElementById("inputSearch");
 let countriesData = [];
+let sortMethod = "maxToMin";
 
 async function fetchCountries() {
   await fetch("https://restcountries.com/v3.1/all")
@@ -13,22 +16,54 @@ async function fetchCountries() {
 }
 
 function countriesDisplay() {
-  countriesContainer.innerHTML = countriesData.map(
-    (country) =>
-      `
-<dib class="card">
-<img src=${country.flag.png}>
+  countriesContainer.innerHTML = countriesData
+    .filter((country) =>
+      country.translations.fra.common
+        .toLowerCase()
+        .includes(inputSearch.value.toLowerCase())
+    )
+    .sort((a, b) => {
+      if (sortMethod === "maxToMin") {
+        return b.population - a.population;
+      } else if (sortMethod === "minToMax") {
+        return a.population - b.population;
+      } else if (sortMethod === "alpha") {
+        return a.translations.fra.common.localeCompare(
+          b.translations.fra.common
+        );
+      }
+    })
+    .slice(0, inputRange.value)
+    .map(
+      (country) =>
+        `
+<div class="card">
+<img src=${country.flags.svg}>
 <h2>${country.translations.fra.common}</h2>
-<h3>${country.capital}</h3>
-<p> Population : ${country.population}</p>
-
+<h4>${country.capital}</h4>
+<p> Population : ${country.population.toLocaleString()}</p>
 </div>
-
 `
-  );
+    )
+    .join("");
 }
 
 window.addEventListener("load", fetchCountries);
+
+inputSearch.addEventListener("input", countriesDisplay);
+
+inputRange.addEventListener("input", () => {
+  countriesDisplay();
+  rangeValue.textContent = inputRange.value;
+});
+
+btnSort.forEach((btn) => {
+  btn.addEventListener("click", (e) => {
+    console.log(e.target.id);
+    sortMethod = e.target.id;
+    countriesDisplay();
+  });
+});
 
 // 2 - Créer une fonction pour "fetcher" les données, afficher les données dans la console.
 
